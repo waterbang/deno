@@ -1,104 +1,96 @@
 # Deno
 
-[![Build Status - Cirrus][]][Build status] [![Twitter handle][]][Twitter badge]
-[![Discord Chat](https://img.shields.io/discord/684898665143206084?logo=discord&style=social)](https://discord.gg/deno)
+### 基础rust项目命令
 
-<img align="right" src="https://deno.land/logo.svg" height="150px" alt="the deno mascot dinosaur standing in the rain">
+直接执行 main.rs
 
-Deno is a _simple_, _modern_ and _secure_ runtime for **JavaScript** and
-**TypeScript** that uses V8 and is built in Rust.
-
-### Features
-
-- Secure by default. No file, network, or environment access, unless explicitly
-  enabled.
-- Supports TypeScript out of the box.
-- Ships only a single executable file.
-- [Built-in utilities.](https://deno.land/manual/tools#built-in-tooling)
-- Set of reviewed standard modules that are guaranteed to work with
-  [Deno](https://deno.land/std/).
-
-### Install
-
-Shell (Mac, Linux):
-
-```sh
-curl -fsSL https://deno.land/install.sh | sh
+```shell
+cargo run
 ```
 
-PowerShell (Windows):
+编译出 android lib
+
+```shell
+rustup  target add aarch64-linux-android
+
+cargo build --target=aarch64-linux-android --release
+
+cargo build --target=aarch64-apple-darwin --release
+```
+
+修改默认编译器
+
+```
+rustup set default-host x86_64-pc-windows-msvc
+rustup set default-host x86_64-pc-windows-gnu
+```
+
+### 如果遇到v8报错需要设置环境变量
 
 ```powershell
-iwr https://deno.land/install.ps1 -useb | iex
+$env:RUSTY_V8_MIRROR="D:/dev\AndroidStudioProjects\RustEample\rust_lib\assets\rusty_v8_mirror\"
+$env:RUSTY_V8_ARCHIVE="D:\dev\AndroidStudioProjects\RustEample\rust_lib\assets\rusty_v8_mirror\v0.42.0\rusty_v8_release_x86_64-pc-windows-msvc.lib"
+$env:RUSTY_V8_ARCHIVE="D:\dev\AndroidStudioProjects\RustEample\rust_lib\assets\rusty_v8_mirror\v0.42.0\librusty_v8_release_aarch64-linux-android.a"
 ```
 
-[Homebrew](https://formulae.brew.sh/formula/deno) (Mac):
-
-```sh
-brew install deno
+```cmd
+set RUSTY_V8_MIRROR=D:\dev\AndroidStudioProjects\RustEample\rust_lib\assets\rusty_v8_mirror\
+set RUSTY_V8_ARCHIVE=D:\dev\AndroidStudioProjects\RustEample\rust_lib\assets\rusty_v8_mirror\v0.42.0\rusty_v8_release_x86_64-pc-windows-msvc.lib
 ```
 
-[Chocolatey](https://chocolatey.org/packages/deno) (Windows):
+```bash
+export RUSTY_V8_MIRROR="/mnt/d/dev/AndroidStudioProjects/RustEample/rust_lib/assets/rusty_v8_mirror/"
+export RUSTY_V8_ARCHIVE="/mnt/d/dev/AndroidStudioProjects/RustEample/rust_lib/assets/rusty_v8_mirror/v0.42.0/librusty_v8_release_aarch64-linux-android.a"
 
-```powershell
-choco install deno
+export RUSTY_V8_MIRROR="/Users/mac/Desktop/waterbang/project/android-deno-runtime-example/rust_lib/assets/rusty_v8_mirror/"
+export RUSTY_V8_ARCHIVE="/Users/mac/Desktop/waterbang/project/android-deno-runtime-example/rust_lib/assets/rusty_v8_mirror/v0.42.0/librusty_v8_release_aarch64-linux-android.a"
+
+
+export RUSTY_V8_ARCHIVE="/Users/mac/Desktop/waterbang/project/android-deno-runtime-example/rust_lib/assets/rusty_v8_mirror/v0.42.0/librusty_v8_release_aarch64-apple-darwin.a"
 ```
 
-[Scoop](https://scoop.sh/) (Windows):
+### 修复`unable to find library -lgcc`的问题
 
-```powershell
-scoop install deno
+网上有一种错误说法，其实只能让编译通过，实际是运行的时候会爆出错误：
+
+```bash
+cd /Users/kzf/Library/Android/sdk/ndk/24.0.8215888/toolchains/llvm/prebuilt/darwin-x86_64/lib64/clang/14.0.1/lib/linux/aarch64
+echo "INPUT(-lunwind)" > libgcc.a
+
+java.lang.UnsatisfiedLinkError: dlopen failed: cannot locate symbol "__emutls_get_address" referenced by "/data/app/~~xgQux0SWdH8NR7GLHyXCNg==/org.bfchain.rust.example-1rL1uIoeTHAxKOyHiDM32w==/base.apk!/lib/arm64-v8a/librust_lib.so"...
 ```
 
-Build and install from source using [Cargo](https://crates.io/crates/deno):
+目前已知的解决方法就是把ndk锁在22版本以下
 
-```sh
-cargo install deno --locked
+### 修复 failed to run custom build command for `ring v0.16.20`
+
+运行  
+
+```bash
+RUST_BACKTRACE=1 cargo build --target=aarch64-linux-android --release
 ```
 
-See
-[deno_install](https://github.com/denoland/deno_install/blob/master/README.md)
-and [releases](https://github.com/denoland/deno/releases) for other options.
+发现
 
-### Getting Started
+```bash
+ --- stderr
 
-Try running a simple program:
-
-```sh
-deno run https://deno.land/std/examples/welcome.ts
+  error occurred: Failed to find tool. Is `aarch64-linux-android-clang` installed?
 ```
 
-Or a more complex one:
+原因是环境变量的名称错误，需要更改一下
 
-```ts
-const listener = Deno.listen({ port: 8000 });
-console.log("http://localhost:8000/");
+```bash
+cd /Users/mac/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64/bin/
 
-for await (const conn of listener) {
-  serve(conn);
-}
-
-async function serve(conn: Deno.Conn) {
-  for await (const { respondWith } of Deno.serveHttp(conn)) {
-    respondWith(new Response("Hello world"));
-  }
-}
+cp aarch64-linux-android28-clang aarch64-linux-android-clang 
 ```
 
-You can find a deeper introduction, examples, and environment setup guides in
-the [manual](https://deno.land/manual).
+### 修复error: failed to run custom build command for `libffi-sys v1.3.2`
 
-The complete API reference is available at the runtime
-[documentation](https://doc.deno.land).
+```
+brew install autoconf automake libtool   
+```
 
-### Contributing
-
-We appreciate your help!
-
-To contribute, please read our
-[contributing instructions](https://deno.land/manual/contributing).
-
-[Build Status - Cirrus]: https://github.com/denoland/deno/workflows/ci/badge.svg?branch=main&event=push
-[Build status]: https://github.com/denoland/deno/actions
-[Twitter badge]: https://twitter.com/intent/follow?screen_name=deno_land
-[Twitter handle]: https://img.shields.io/twitter/follow/deno_land.svg?style=social&label=Follow
+然后 在ext/ffi/cargo.toml
+修改版本为：libffi = "3.0.0"
