@@ -1,20 +1,23 @@
 # Copyright 2018-2022 the Deno authors. All rights reserved. MIT license.
 
 [package]
-name = "deno_broadcast_channel"
-version = "0.56.0"
 authors = ["the Deno authors"]
+description = "Implementation of BroadcastChannel API for Deno"
 edition = "2021"
 license = "MIT"
+name = "deno_broadcast_channel"
 readme = "README.md"
 repository = "https://github.com/denoland/deno"
-description = "Implementation of BroadcastChannel API for Deno"
+version = "0.56.0"
 
 [lib]
 path = "lib.rs"
 
+[features]
+standalone = ["deno_core/standalone"]
+
 [dependencies]
 async-trait = "0.1"
-deno_core = { version = "0.144.0", path = "../../core" }
-tokio = { version = "1.17", features = ["full"] }
-uuid = { version = "1.0.0", features = ["v4"] }
+deno_core = {version = "0.144.0", path = "../../core"}
+tokio = {version = "1.17", features = ["full"]}
+uuid = {version = "1.0.0", features = ["v4"]}

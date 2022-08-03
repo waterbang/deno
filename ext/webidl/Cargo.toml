@@ -1,17 +1,20 @@
 # Copyright 2018-2022 the Deno authors. All rights reserved. MIT license.
 
 [package]
-name = "deno_webidl"
-version = "0.62.0"
 authors = ["the Deno authors"]
+description = "WebIDL implementation for Deno"
 edition = "2021"
 license = "MIT"
+name = "deno_webidl"
 readme = "README.md"
 repository = "https://github.com/denoland/deno"
-description = "WebIDL implementation for Deno"
+version = "0.62.0"
 
 [lib]
 path = "lib.rs"
 
+[features]
+standalone = ["deno_core/standalone"]
+
 [dependencies]
-deno_core = { version = "0.144.0", path = "../../core" }
+deno_core = {version = "0.144.0", path = "../../core"}

@@ -1,20 +1,23 @@
 # Copyright 2018-2022 the Deno authors. All rights reserved. MIT license.
 
 [package]
-name = "deno_webstorage"
-version = "0.57.0"
 authors = ["the Deno authors"]
+description = "Implementation of WebStorage API for Deno"
 edition = "2021"
 license = "MIT"
+name = "deno_webstorage"
 readme = "README.md"
 repository = "https://github.com/denoland/deno"
-description = "Implementation of WebStorage API for Deno"
+version = "0.57.0"
 
 [lib]
 path = "lib.rs"
 
+[features]
+standalone = ["deno_core/standalone"]
+
 [dependencies]
-deno_core = { version = "0.144.0", path = "../../core" }
-deno_web = { version = "0.93.0", path = "../web" }
-rusqlite = { version = "0.27.0", features = ["unlock_notify", "bundled"] }
-serde = { version = "1.0.136", features = ["derive"] }
+deno_core = {version = "0.144.0", path = "../../core"}
+deno_web = {version = "0.93.0", path = "../web"}
+rusqlite = {version = "0.27.0", features = ["unlock_notify", "bundled"]}
+serde = {version = "1.0.136", features = ["derive"]}

@@ -1,24 +1,27 @@
 # Copyright 2018-2022 the Deno authors. All rights reserved. MIT license.
 
 [package]
-name = "deno_tls"
-version = "0.49.0"
 authors = ["the Deno authors"]
+description = "TLS for Deno"
 edition = "2021"
 license = "MIT"
+name = "deno_tls"
 readme = "README.md"
 repository = "https://github.com/denoland/deno"
-description = "TLS for Deno"
+version = "0.49.0"
 
 [lib]
 path = "lib.rs"
 
+[features]
+standalone = ["deno_core/standalone"]
+
 [dependencies]
-deno_core = { version = "0.144.0", path = "../../core" }
+deno_core = {version = "0.144.0", path = "../../core"}
 once_cell = "1.10.0"
-rustls = { version = "0.20.5", features = ["dangerous_configuration"] }
+rustls = {version = "0.20.5", features = ["dangerous_configuration"]}
 rustls-native-certs = "0.6.2"
 rustls-pemfile = "1.0.0"
-serde = { version = "1.0.136", features = ["derive"] }
+serde = {version = "1.0.136", features = ["derive"]}
 webpki = "0.22"
 webpki-roots = "0.22"
